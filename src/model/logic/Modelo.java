@@ -111,7 +111,7 @@ public class Modelo {
 	}
 	
 	
-	public String req1String(String punto1, String punto2)
+	public String reqComponentesConectados(String punto1, String punto2)
 	{
 		ITablaSimbolos tabla= grafo.getSSC();
 		ILista lista= tabla.valueSet();
@@ -164,7 +164,7 @@ public class Modelo {
 		
 	}
 	
-	public String req2String()
+	public String reqEncontrarLandings()
 	{
 		String fragmento="";
 		
@@ -203,7 +203,7 @@ public class Modelo {
 		
 	}
 	
-	public String req3String(String pais1, String pais2)
+	public String reqRutaMinima(String pais1, String pais2)
 	{
 		Country pais11= (Country) paises.get(pais1);
 		Country pais22= (Country) paises.get(pais2);
@@ -266,7 +266,7 @@ public class Modelo {
 		
 	}
 	
-	public String req4String()
+	public String reqRedExpansionMinima()
 	{
 		String fragmento="";
 		ILista lista1= landingidtabla.valueSet();
@@ -430,7 +430,7 @@ public class Modelo {
 		
 	}
 	
-	public String req5String(String punto)
+	public String reqFallaEnConexion(String punto)
 	{
 		ILista afectados= req5(punto);
 		
