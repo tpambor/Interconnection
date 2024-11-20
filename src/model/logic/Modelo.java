@@ -636,34 +636,14 @@ public class Modelo {
 		
 		Reader in = new FileReader("./data/countries.csv");
 		Iterable<CSVRecord> records = CSVFormat.RFC4180.withHeader().parse(in);
-		int contador=1;
 		for (CSVRecord record : records) 
 		{
-			if (record.get(0).equals(""))
-			    continue;
-
-			String countryName= record.get(0);
+			Country pais = Country.fromCSVRecord(record);
+			if(pais == null)
+				continue;
 			
-			String capitalName= record.get(1);
-			
-			double latitude= Double.parseDouble(record.get(2));
-			
-			double longitude= Double.parseDouble(record.get(3));
-			
-			String code= record.get(4);
-			
-			String continentName= record.get(5);
-			
-			float population= Float.parseFloat(record.get(6).replace(".", ""));
-			
-			double users= Double.parseDouble(record.get(7).replace(".", ""));;
-			
-			Country pais= new Country(countryName, capitalName, latitude, longitude, code, continentName, population, users);
-			
-			grafo.insertVertex(capitalName, pais);
-			paises.put(countryName, pais);
-
-			contador++;
+			grafo.insertVertex(pais.getCapitalName(), pais);
+			paises.put(pais.getCountryName(), pais);
 		}
 		
 		
