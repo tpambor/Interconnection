@@ -1,112 +1,97 @@
 package controller;
 
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Map;
 
-import model.data_structures.ILista;
-import model.data_structures.NullException;
-import model.data_structures.PosException;
-import model.data_structures.VacioException;
-import model.data_structures.YoutubeVideo;
 import model.logic.Modelo;
-import utils.Ordenamiento;
 import view.View;
 
-public class Controller<T> {
-
-	/* Instancia del Modelo*/
+public class Controller {
 	private Modelo modelo;
-	
-	/* Instancia de la Vista*/
 	private View view;
-	
-	/**
-	 * Crear la vista y el modelo del proyecto
-	 * @param capacidad tamaNo inicial del arreglo
-	 */
+
+	private Map<Integer, Runnable> menuTable = new HashMap<>();
+	private boolean fin = false;
+
 	public Controller ()
 	{
 		view = new View();
+
+		menuTable.put(1, this::menuCargarDatos);
+		menuTable.put(2, this::menuComponentesConectados);
+		menuTable.put(3, this::menuEncontrarLandings);
+		menuTable.put(4, this::menuRutaMinima);
+		menuTable.put(5, this::menuRedExpansionMinima);
+		menuTable.put(6, this::menuFallasEnConexion);
+		menuTable.put(7, this::menuExit);
 	}
-		
-	public void run() 
-	{
-		Scanner lector = new Scanner(System.in);
-		boolean fin = false;
 
-		while( !fin )
+	private void menuCargarDatos() {
+		view.printMessage("--------- \nCargar datos");
+
+		modelo = new Modelo(1); 
+		try 
 		{
-			view.printMenu();
+			modelo.cargar();
+		} catch (IOException e) {
 
-			int option = lector.nextInt();
-			switch(option){
-			case 1:
-				view.printMessage("--------- \nCargar datos");
-				modelo = new Modelo(1); 
-				try 
-				{
-					modelo.cargar();
-				} catch (IOException e) {
-
-					e.printStackTrace();
-				}
-				view.printModelo(modelo);	
-
-				break;
-				
-			case 2:
-				view.printMessage("--------- \nIngrese el nombre del primer punto de conexión");
-				String punto1= lector.next();
-				lector.nextLine();
-				
-				view.printMessage("--------- \nIngrese el nombre del segundo punto de conexión");
-				String punto2= lector.next();
-				lector.nextLine();
-				
-				String res1=modelo.req1String(punto1, punto2);
-				view.printMessage(res1);
-				
-				break;
-				
-			case 3:
-				String res2= modelo.req2String();
-				view.printMessage(res2);
-				break;
-				
-			case 4:
-				view.printMessage("--------- \nIngrese el nombre del primer país");
-				String pais1= lector.next();
-				lector.nextLine();
-				
-				view.printMessage("--------- \nIngrese el nombre del segundo país");
-				String pais2= lector.next();
-				lector.nextLine();
-				
-				String res3= modelo.req3String(pais1, pais2);
-				view.printMessage(res3);
-				break;
-			case 5:
-				String res4= modelo.req4String();
-				view.printMessage(res4);
-				break;
-			case 6:
-				view.printMessage("--------- \nIngrese el nombre del punto de conexión");
-				String landing= lector.next();
-				lector.nextLine();
-				String res5= modelo.req5String(landing);
-				view.printMessage(res5);
-				break;
-			case 7:
-				view.printMessage("--------- \n Hasta pronto !! \n---------"); 
-				lector.close();
-				fin = true;
-				break;
-			default: 
-				view.printMessage("--------- \n Opcion Invalida !! \n---------");
-				break;
-			}
+			e.printStackTrace();
 		}
 
+		view.printModelo(modelo);	
+	}
+
+	private void menuComponentesConectados() {
+		view.showDialogComponentesConectados((String punto1, String punto2) -> {
+			String res = modelo.reqComponentesConectados(punto1, punto2);
+			view.printMessage(res);
+		});
+	}
+
+	private void menuEncontrarLandings() {
+		String res = modelo.reqEncontrarLandings();
+		view.printMessage(res);
+	}
+
+	private void menuRutaMinima() {
+		view.showDialogRutaMinima((String pais1, String pais2) -> {
+			String res = modelo.reqRutaMinima(pais1, pais2);
+			view.printMessage(res);
+		});
+	}
+
+	private void menuRedExpansionMinima() {
+		String res = modelo.reqRedExpansionMinima();
+		view.printMessage(res);
+	}
+
+	private void menuFallasEnConexion() {
+		view.showDialogFallaEnConexion((String landing) -> {
+			String res = modelo.reqFallaEnConexion(landing);
+			view.printMessage(res);
+		});
+	}
+
+	private void menuExit() {
+		fin = true;
+
+		view.printMessage("--------- \n Hasta pronto !! \n---------"); 
+	}
+
+	private void menuInvalid() {
+		view.printMessage("--------- \n Opcion Invalida !! \n---------");
+	}
+
+	public void run() 
+	{
+		while(!fin)
+		{
+			int option = view.showMenu();
+
+			menuTable.getOrDefault(option, this::menuInvalid).run();
+		}
+
+		view.close();
 	}	
 }
