@@ -1,47 +1,38 @@
 package model.data_structures;
 
 import java.util.Comparator;
+import org.apache.commons.csv.CSVRecord;
 
 public class Country implements Comparable <Country>
 {
 	private String countryName;
-	
 	private String capitalName;
-	
 	private double latitude;
-	
 	private double longitude;
-	
 	private String code;
-	
 	private String continentName;
-	
 	private float population;
-	
 	private double users;
+	private double distlan = 0;
 	
-	private double distlan;
-	
-	public Country(String pcountryName, String pcapitalName, double platitude, double plongitude,
-			        String pcode, String pcontinentName, float ppopulation, double pusers)
-	{
-		setCountryName(pcountryName);
+	private Country() {}
+
+	public static Country fromCSVRecord(CSVRecord csvrecord) {
+		if (csvrecord.get(0).equals(""))
+			return null;
+
+		Country country = new Country();
+
+		country.setCountryName(csvrecord.get(0));
+		country.setCapitalName(csvrecord.get(1));
+		country.setLatitude(Double.parseDouble(csvrecord.get(2)));
+		country.setLongitude(Double.parseDouble(csvrecord.get(3)));
+		country.setCode(csvrecord.get(4));
+		country.setContinentName(csvrecord.get(5));
+		country.setPopulation(Float.parseFloat(csvrecord.get(6).replace(".", "")));
+		country.setUsers(Double.parseDouble(csvrecord.get(7).replace(".", "")));
 		
-		setCapitalName(pcapitalName);
-		
-		setLatitude(platitude);
-		
-		setLongitude(plongitude);
-		
-		setCode(pcode);
-		
-		setContinentName(pcontinentName);
-		
-		setPopulation(ppopulation);
-		
-		setUsers(pusers);
-		
-		setDistlan(0);
+		return country;
 	}
 
 	public String getCountryName() {
@@ -108,51 +99,43 @@ public class Country implements Comparable <Country>
 		this.users = users;
 	}
 
+	public double getDistlan() {
+		return distlan;
+	}
+
+	public void setDistlan(double distlan) {
+		this.distlan = distlan;
+	}
+
 	@Override
 	public int compareTo(Country o) {
-		// TODO Auto-generated method stub
 		return 0;
 	}
-	
-	 public static class ComparadorXKm implements Comparator<Country>
-	 {
 
-		 public int compare(Country pais1, Country pais2) 
-		 {
-			 if (pais1.getDistlan()-pais2.getDistlan()<0)
-			 {
-				 return -1;
-			 }
-			 else if(pais1.getDistlan()-pais2.getDistlan()>0)
-			 {
-				 return 1;
-			 }
-			 else
-			 {
-				 return 0;
-			 }
-		 }
-
+	public static class ComparadorXKm implements Comparator<Country>
+	{
+		public int compare(Country pais1, Country pais2) 
+		{
+			if (pais1.getDistlan()-pais2.getDistlan()<0)
+			{
+				return -1;
+			}
+			else if(pais1.getDistlan()-pais2.getDistlan()>0)
+			{
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
+		}
 	}
 	 
-	 public static class ComparadorXNombre implements Comparator<Country>
-	 {
-
-		 public int compare(Country pais1, Country pais2) 
-		 {
-			 return pais1.getCountryName().compareTo(pais2.getCountryName());
-		 }
-
+	public static class ComparadorXNombre implements Comparator<Country>
+	{
+		public int compare(Country pais1, Country pais2) 
+		{
+			return pais1.getCountryName().compareTo(pais2.getCountryName());
+		}
 	}
-
-
-		public double getDistlan() {
-			return distlan;
-		}
-
-		public void setDistlan(double distlan) {
-			this.distlan = distlan;
-		}
-	
-	
 }

@@ -1,55 +1,48 @@
 package model.data_structures;
 
+import org.apache.commons.csv.CSVRecord;
+
 public class Connection 
 {
-	private int origin;
-	
-	private int destination;
-	
+	private String origin;
+	private String destination;
 	private String name;
-	
 	private String cableid;
-	
 	private String length;
-	
-	private int rfs;
-	
+	private String rfs;
 	private String owners;
-	
 	private Double capacity;
 	
-	public Connection(int porigin, int pdestination, String pname, String pcable, String plength, int prfs, String powners, Double pcapacity)
-	{
-		setOrigin(porigin);
-		
-		setDestination(pdestination);
-		
-		setName(pname);
-		
-		setCableid(pcable);
-		
-		setLength(plength);
-		
-		setRfs(prfs);
-		
-		setOwners(powners);
-		
-		setCapacity(pcapacity);
-	}
+	private Connection() {}
 
-	public int getOrigin() {
+    public static Connection fromCSVRecord(CSVRecord csvrecord) {
+		Connection connection = new Connection();
+
+        connection.setOrigin(csvrecord.get(0));
+        connection.setDestination(csvrecord.get(1));
+		connection.setName(csvrecord.get(2));
+        connection.setCableid(csvrecord.get(3));
+		connection.setLength(csvrecord.get(4).split(" ")[0]);
+		connection.setRfs(csvrecord.get(5));
+		connection.setOwners(csvrecord.get(6));
+		connection.setCapacity(Double.parseDouble(csvrecord.get(7)));
+
+        return connection;
+    }
+
+	public String getOrigin() {
 		return origin;
 	}
 
-	public void setOrigin(int origin) {
+	public void setOrigin(String origin) {
 		this.origin = origin;
 	}
 
-	public int getDestination() {
+	public String getDestination() {
 		return destination;
 	}
 
-	public void setDestination(int destination) {
+	public void setDestination(String destination) {
 		this.destination = destination;
 	}
 
@@ -69,11 +62,11 @@ public class Connection
 		this.length = length;
 	}
 
-	public int getRfs() {
+	public String getRfs() {
 		return rfs;
 	}
 
-	public void setRfs(int rfs) {
+	public void setRfs(String rfs) {
 		this.rfs = rfs;
 	}
 

@@ -4,18 +4,17 @@
   <artifactId>Interconnection</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <dependencies>
-      <dependency>
-  <groupId>org.apache.commons</groupId>
-  <artifactId>commons-csv</artifactId>
-  <version>1.9.0</version>
-</dependency>
-<dependency>
-    <groupId>junit</groupId>
-    <artifactId>junit</artifactId>
-    <version>4.12</version>
-    <scope>test</scope>
-</dependency>
-
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-csv</artifactId>
+      <version>1.12.0</version>
+    </dependency>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.12</version>
+        <scope>test</scope>
+    </dependency>
   </dependencies>
 <properties>
   <sonar.organization>tpambor</sonar.organization>
