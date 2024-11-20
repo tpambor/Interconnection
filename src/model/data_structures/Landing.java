@@ -1,19 +1,15 @@
 package model.data_structures;
 
+import org.apache.commons.csv.CSVRecord;
+
 public class Landing implements Comparable <Landing>
 {
 	private String landingId;
-	
 	private String id;
-	
 	private String name;
-	
 	private String pais;
-	
 	private double latitude;
-	
 	private double longitude;
-	
 	private String codigo; 
 	
 	public Landing(String plandingid, String pid, String pname, String ppais, double platitude, double plongitude)
@@ -25,6 +21,18 @@ public class Landing implements Comparable <Landing>
 		setLatitude(platitude);
 		setLongitude(plongitude);
 		setCodigo("");
+	}
+
+	public static Landing fromCSVRecord(CSVRecord record) {
+		String landingId= record.get(0);
+		String id=record.get(1);
+		String[] x = record.get(2).split(", ");
+		String name = x[0];
+		String paisnombre = x[x.length-1];
+		double latitude = Double.parseDouble(record.get(3));
+		double longitude = Double.parseDouble(record.get(4));
+		
+		return new Landing(landingId, id, name, paisnombre, latitude, longitude);
 	}
 
 	public String getLandingId() {

@@ -1,55 +1,56 @@
 package model.data_structures;
 
+import org.apache.commons.csv.CSVRecord;
+
 public class Connection 
 {
-	private int origin;
-	
-	private int destination;
-	
+	private String origin;
+	private String destination;
 	private String name;
-	
 	private String cableid;
-	
 	private String length;
-	
-	private int rfs;
-	
+	private String rfs;
 	private String owners;
-	
 	private Double capacity;
 	
-	public Connection(int porigin, int pdestination, String pname, String pcable, String plength, int prfs, String powners, Double pcapacity)
+	private Connection(String porigin, String pdestination, String pname, String pcable, String plength, String prfs, String powners, Double pcapacity)
 	{
 		setOrigin(porigin);
-		
 		setDestination(pdestination);
-		
 		setName(pname);
-		
 		setCableid(pcable);
-		
 		setLength(plength);
-		
 		setRfs(prfs);
-		
 		setOwners(powners);
-		
 		setCapacity(pcapacity);
 	}
 
-	public int getOrigin() {
+    public static Connection fromCSVRecord(CSVRecord record) {
+        String origin = record.get(0);
+        String destination = record.get(1);
+		String cablename = record.get(2);
+        String cableid = record.get(3);
+		String length = record.get(4).split(" ")[0];
+		String rfs = record.get(5);
+		String owners = record.get(6);
+		Double capacity = Double.parseDouble(record.get(7));
+
+        return new Connection(origin, destination, cablename, cableid, length, rfs, owners, capacity);
+    }
+
+	public String getOrigin() {
 		return origin;
 	}
 
-	public void setOrigin(int origin) {
+	public void setOrigin(String origin) {
 		this.origin = origin;
 	}
 
-	public int getDestination() {
+	public String getDestination() {
 		return destination;
 	}
 
-	public void setDestination(int destination) {
+	public void setDestination(String destination) {
 		this.destination = destination;
 	}
 
@@ -69,11 +70,11 @@ public class Connection
 		this.length = length;
 	}
 
-	public int getRfs() {
+	public String getRfs() {
 		return rfs;
 	}
 
-	public void setRfs(int rfs) {
+	public void setRfs(String rfs) {
 		this.rfs = rfs;
 	}
 
