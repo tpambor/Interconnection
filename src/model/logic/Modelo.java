@@ -667,9 +667,9 @@ public class Modelo {
 		}
 		else
 		{
-			float old_weight = edge.getWeight();
+			float oldWeight = edge.getWeight();
 
-			if(weight > old_weight)
+			if(weight > oldWeight)
 				edge.setWeight(weight);
 		}
 	}
@@ -721,14 +721,12 @@ public class Modelo {
 		addToNombreCodigo(landing1);
 	}
 
-	private void cargarPaises() throws IOException {
+	private void cargarPaises(Iterable<CSVRecord> csvrecords) {
 		paises = new TablaHashLinearProbing(2);
 
-		Reader in = new FileReader("./data/countries.csv");
-		Iterable<CSVRecord> records = CSVFormat.RFC4180.withHeader().parse(in);
-		for (CSVRecord record : records) 
+		for (CSVRecord csvrecord : csvrecords) 
 		{
-			Country pais = Country.fromCSVRecord(record);
+			Country pais = Country.fromCSVRecord(csvrecord);
 			if(pais == null)
 				continue;
 			
@@ -737,26 +735,21 @@ public class Modelo {
 		}
 	}
 
-	private void cargarLandingPoints() throws IOException {
+	private void cargarLandingPoints(Iterable<CSVRecord> csvrecords) {
 		points = new  TablaHashLinearProbing(2);
 
-		Reader in = new FileReader("./data/landing_points.csv");
-		Iterable<CSVRecord> records = CSVFormat.RFC4180.withHeader().parse(in);
-		for (CSVRecord record : records) 
+		for (CSVRecord csvrecord : csvrecords) 
 		{
-			Landing landing = Landing.fromCSVRecord(record);
+			Landing landing = Landing.fromCSVRecord(csvrecord);
 
 			points.put(landing.getLandingId(), landing);	
 		}
 	}
 
-	private void cargarConnections() throws IOException {
-		Reader in = new FileReader("./data/connections.csv");
-		Iterable<CSVRecord> records = CSVFormat.RFC4180.withHeader().parse(in);
-
-		for (CSVRecord record : records) 
+	private void cargarConnections(Iterable<CSVRecord> csvrecords) {
+		for (CSVRecord csvrecord : csvrecords) 
 		{
-			Connection connection = Connection.fromCSVRecord(record);
+			Connection connection = Connection.fromCSVRecord(csvrecord);
 
 			buildEdges(connection);
 		}
@@ -798,6 +791,12 @@ public class Modelo {
 		}
 	}
 
+	private Iterable<CSVRecord> loadCSVFile(String filename) throws IOException {
+		Reader in = new FileReader(filename);
+		CSVFormat csvformat = CSVFormat.Builder.create(CSVFormat.RFC4180).setHeader().build();
+		return csvformat.parse(in);
+	}
+
 	public void cargar() throws IOException
 	{
 		grafo = new GrafoListaAdyacencia(2);
@@ -805,9 +804,9 @@ public class Modelo {
 		landingidtabla = new TablaHashSeparteChaining(2);
 		nombrecodigo = new TablaHashSeparteChaining(2);
 		
-		cargarPaises();
-		cargarLandingPoints();
-		cargarConnections();
+		cargarPaises(loadCSVFile("./data/countries.csv"));
+		cargarLandingPoints(loadCSVFile("./data/landing_points.csv"));
+		cargarConnections(loadCSVFile("./data/connections.csv"));
 		
 		buildEdgesForLandingPoints();
 	}

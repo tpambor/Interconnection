@@ -23,14 +23,14 @@ public class Landing implements Comparable <Landing>
 		setCodigo("");
 	}
 
-	public static Landing fromCSVRecord(CSVRecord record) {
-		String landingId= record.get(0);
-		String id=record.get(1);
-		String[] x = record.get(2).split(", ");
+	public static Landing fromCSVRecord(CSVRecord csvrecord) {
+		String landingId = csvrecord.get(0);
+		String id =csvrecord.get(1);
+		String[] x = csvrecord.get(2).split(", ");
 		String name = x[0];
 		String paisnombre = x[x.length-1];
-		double latitude = Double.parseDouble(record.get(3));
-		double longitude = Double.parseDouble(record.get(4));
+		double latitude = Double.parseDouble(csvrecord.get(3));
+		double longitude = Double.parseDouble(csvrecord.get(4));
 		
 		return new Landing(landingId, id, name, paisnombre, latitude, longitude);
 	}

@@ -13,29 +13,21 @@ public class Connection
 	private String owners;
 	private Double capacity;
 	
-	private Connection(String porigin, String pdestination, String pname, String pcable, String plength, String prfs, String powners, Double pcapacity)
-	{
-		setOrigin(porigin);
-		setDestination(pdestination);
-		setName(pname);
-		setCableid(pcable);
-		setLength(plength);
-		setRfs(prfs);
-		setOwners(powners);
-		setCapacity(pcapacity);
-	}
+	private Connection() {}
 
-    public static Connection fromCSVRecord(CSVRecord record) {
-        String origin = record.get(0);
-        String destination = record.get(1);
-		String cablename = record.get(2);
-        String cableid = record.get(3);
-		String length = record.get(4).split(" ")[0];
-		String rfs = record.get(5);
-		String owners = record.get(6);
-		Double capacity = Double.parseDouble(record.get(7));
+    public static Connection fromCSVRecord(CSVRecord csvrecord) {
+		Connection connection = new Connection();
 
-        return new Connection(origin, destination, cablename, cableid, length, rfs, owners, capacity);
+        connection.setOrigin(csvrecord.get(0));
+        connection.setDestination(csvrecord.get(1));
+		connection.setName(csvrecord.get(2));
+        connection.setCableid(csvrecord.get(3));
+		connection.setLength(csvrecord.get(4).split(" ")[0]);
+		connection.setRfs(csvrecord.get(5));
+		connection.setOwners(csvrecord.get(6));
+		connection.setCapacity(Double.parseDouble(csvrecord.get(7)));
+
+        return connection;
     }
 
 	public String getOrigin() {

@@ -13,36 +13,26 @@ public class Country implements Comparable <Country>
 	private String continentName;
 	private float population;
 	private double users;
-	private double distlan;
+	private double distlan = 0;
 	
-	private Country(String pcountryName, String pcapitalName, double platitude, double plongitude,
-			        String pcode, String pcontinentName, float ppopulation, double pusers)
-	{
-		setCountryName(pcountryName);
-		setCapitalName(pcapitalName);
-		setLatitude(platitude);
-		setLongitude(plongitude);
-		setCode(pcode);
-		setContinentName(pcontinentName);
-		setPopulation(ppopulation);
-		setUsers(pusers);
-		setDistlan(0);
-	}
+	private Country() {}
 
-	public static Country fromCSVRecord(CSVRecord record) {
-		if (record.get(0).equals(""))
+	public static Country fromCSVRecord(CSVRecord csvrecord) {
+		if (csvrecord.get(0).equals(""))
 			return null;
 
-		String countryName = record.get(0);
-		String capitalName = record.get(1);
-		double latitude = Double.parseDouble(record.get(2));
-		double longitude = Double.parseDouble(record.get(3));
-		String code = record.get(4);
-		String continentName = record.get(5);
-		float population = Float.parseFloat(record.get(6).replace(".", ""));
-		double users = Double.parseDouble(record.get(7).replace(".", ""));
+		Country country = new Country();
+
+		country.setCountryName(csvrecord.get(0));
+		country.setCapitalName(csvrecord.get(1));
+		country.setLatitude(Double.parseDouble(csvrecord.get(2)));
+		country.setLongitude(Double.parseDouble(csvrecord.get(3)));
+		country.setCode(csvrecord.get(4));
+		country.setContinentName(csvrecord.get(5));
+		country.setPopulation(Float.parseFloat(csvrecord.get(6).replace(".", "")));
+		country.setUsers(Double.parseDouble(csvrecord.get(7).replace(".", "")));
 		
-		return new Country(countryName, capitalName, latitude, longitude, code, continentName, population, users);
+		return country;
 	}
 
 	public String getCountryName() {
