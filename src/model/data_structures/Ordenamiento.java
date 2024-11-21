@@ -1,11 +1,6 @@
-package utils;
+package model.data_structures;
 
 import java.util.Comparator;
-
-import model.data_structures.ILista;
-import model.data_structures.NullException;
-import model.data_structures.PosException;
-import model.data_structures.VacioException;
 
 public final class Ordenamiento <T extends Comparable <T>>
 {
@@ -51,38 +46,32 @@ public final class Ordenamiento <T extends Comparable <T>>
 	
 	}
 	
-	public void ordenarShell (ILista<T> lista, Comparator<T> criterio, boolean ascendente ) throws PosException, VacioException
+	public void ordenarShell(ILista<T> lista, Comparator<T> criterio, boolean ascendente ) throws PosException, VacioException
 	{
-		int n=lista.size();
-		int h=1;
+		int n = lista.size();
+		int h = 1;
 		
-		while(h<(n/3))
+		while(h < (n / 3))
 		{
-			h=3*h +1;
+			h = 3 * h + 1;
 		}
-		
-		while(h>=1)
+
+		while(h >= 1)
 		{
-			for(int i=h+1; i<=n; i++)
+			for(int i = h + 1; i <= n; i++)
 			{
-				boolean enPosicion= false;
-				
-				for(int j=i; j>h && !enPosicion; j-=h)
+				for(int j = i; j > h; j -= h)
 				{
 					int factorComparacion= (ascendente ?1:-1)*criterio.compare(lista.getElement(j), lista.getElement(j-h));
 					
-					if (factorComparacion<0)
-					{
-						lista.exchange(j, j-h);
-					}
-					else
-					{
-						enPosicion=true;
-					}
+					if (factorComparacion >= 0)
+						break;
+
+					lista.exchange(j, j-h);
 				}
 			}
 			
-			h/=3;
+			h /= 3;
 		}
 	}
 	
@@ -102,10 +91,10 @@ public final class Ordenamiento <T extends Comparable <T>>
 	
 	public int partition(ILista<T> lista, Comparator<T> criterio, boolean ascendente, int lo, int hi) throws PosException, VacioException
 	{
-		int follower, leader;
-		follower=leader=lo;
+		int follower = lo;
+		int leader = lo;
 		
-		while(leader<hi)
+		while(leader < hi)
 		{
 			int factorComparacion=(ascendente?1:-1)*criterio.compare(lista.getElement(leader), lista.getElement(hi));
 			if (factorComparacion<0)
@@ -136,8 +125,9 @@ public final class Ordenamiento <T extends Comparable <T>>
 			ordenarMergeSort(rightList, criterio, ascendente);
 			
 			//i recorre la lista de la izquierda, j la derecha y k la lista original.
-			int i,j,k;
-			i=j=k= 1;
+			int i = 1;
+			int j = 1;
+			int k = 1;
 			
 			int leftelements = leftList.size();
 			int rightelements = rightList.size();
@@ -178,6 +168,4 @@ public final class Ordenamiento <T extends Comparable <T>>
 			}
 		}
 	}
-
-	
 }

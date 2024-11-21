@@ -404,7 +404,7 @@ public class ListaEncadenada <T extends Comparable <T>> implements ILista<T>{
 		}
 		else
 		{
-			ILista<T> copia= new ListaEncadenada();
+			ILista<T> copia= new ListaEncadenada<>();
 			
 			int contador=pos;
 			for(int i=0; i<numElementos; i++)
@@ -422,5 +422,22 @@ public class ListaEncadenada <T extends Comparable <T>> implements ILista<T>{
 	public int compareTo(ILista o) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	public ILista<T> unificar(Comparator<T> comparador) {
+		return null;
+	}
+
+	public void ordenar(Comparator<T> comparador, boolean ascendente) {
+		Ordenamiento<T> algsOrdenamiento = new Ordenamiento<>();
+
+		try 
+		{
+			algsOrdenamiento.ordenarMergeSort(this, comparador, ascendente);
+		}
+		catch (PosException | VacioException| NullException  e) 
+		{
+			e.printStackTrace();
+		}
 	}
 }

@@ -3,7 +3,6 @@ package model.logic;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Comparator;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -17,7 +16,6 @@ import model.data_structures.GrafoListaAdyacencia;
 import model.data_structures.ILista;
 import model.data_structures.ITablaSimbolos;
 import model.data_structures.Landing;
-import model.data_structures.ListaEncadenada;
 import model.data_structures.NodoTS;
 import model.data_structures.NullException;
 import model.data_structures.PilaEncadenada;
@@ -27,7 +25,6 @@ import model.data_structures.TablaHashSeparteChaining;
 import model.data_structures.VacioException;
 import model.data_structures.Vertex;
 import model.data_structures.YoutubeVideo;
-import utils.Ordenamiento;
 
 
 /**
@@ -290,10 +287,10 @@ public class Modelo {
 			ILista lista2= grafo.mstPrimLazy(llave);
 			
 			ITablaSimbolos tabla= new TablaHashSeparteChaining<>(2);
-			ILista candidatos= new ArregloDinamico<>(1);
+			ILista<Vertex<String, Landing>> candidatos= new ArregloDinamico<>(1);
 			for(int i=1; i<= lista2.size(); i++)
 			{
-				Edge arco= ((Edge) lista2.getElement(i));
+				Edge arco = ((Edge) lista2.getElement(i));
 				distancia+= arco.getWeight();
 				
 				candidatos.insertElement(arco.getSource(), candidatos.size()+1);
@@ -303,7 +300,8 @@ public class Modelo {
 				tabla.put(arco.getDestination().getId(),arco.getSource() );
 			}
 			
-			ILista unificado= unificar(candidatos, "Vertice");
+			ILista<Vertex<String, Landing>> unificado = candidatos.unificar(new Vertex.ComparadorXKey());
+
 			fragmento+= " La cantidad de nodos conectada a la red de expansión mínima es: " + unificado.size() + "\n El costo total es de: " + distancia;
 			
 			int maximo=0;
@@ -313,7 +311,7 @@ public class Modelo {
 			{
 
 				PilaEncadenada path= new PilaEncadenada();
-				String idBusqueda= (String) ((Vertex) unificado.getElement(i)).getId();
+				String idBusqueda = unificado.getElement(i).getId();
 				Vertex actual;
 
 				while( (actual= (Vertex) tabla.get(idBusqueda))!=null && actual.getInfo()!=null)
@@ -357,7 +355,7 @@ public class Modelo {
 		String codigo= (String) nombrecodigo.get(punto);
 		ILista lista= (ILista) landingidtabla.get(codigo);
 		
-		ILista countries= new ArregloDinamico<>(1);
+		ILista<Country> countries= new ArregloDinamico<>(1);
 		try 
 		{
 			Country paisoriginal=(Country) paises.get(((Landing) ((Vertex)lista.getElement(1)).getInfo()).getPais());
@@ -403,31 +401,10 @@ public class Modelo {
 			}
 		}
 		
-		ILista unificado= unificar(countries, "Country");
-		
-		Comparator<Country> comparador=null;
-
-		Ordenamiento<Country> algsOrdenamientoEventos=new Ordenamiento<Country>();
-
-		comparador= new ComparadorXKm();
-
-		try 
-		{
-
-			if (lista!=null)
-			{
-				algsOrdenamientoEventos.ordenarMergeSort(unificado, comparador, true);
-			}	
-		}
-		catch (PosException | VacioException| NullException  e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ILista<Country> unificado = countries.unificar(new Country.ComparadorXNombre());
+		unificado.ordenar(new ComparadorXKm(), true);
 		
 		return unificado;
-		
-		
 	}
 	
 	public String reqFallaEnConexion(String punto)
@@ -449,182 +426,6 @@ public class Modelo {
 		return fragmento;
 		
 		
-	}
-	
-	public ILista unificar(ILista lista, String criterio)
-	{
-
-		ILista lista2=new ArregloDinamico(1);
-
-		if(criterio.equals("Vertice"))
-		{
-			Comparator<Vertex<String, Landing>> comparador=null;
-
-			Ordenamiento<Vertex<String, Landing>> algsOrdenamientoEventos=new Ordenamiento<Vertex<String, Landing>>();;
-
-			comparador= new Vertex.ComparadorXKey();
-
-
-			try 
-			{
-
-				if (lista!=null)
-				{
-					algsOrdenamientoEventos.ordenarMergeSort(lista, comparador, false);
-
-					for(int i=1; i<=lista.size(); i++)
-					{
-						Vertex actual= (Vertex) lista.getElement(i);
-						Vertex siguiente= (Vertex) lista.getElement(i+1);
-
-						if(siguiente!=null)
-						{
-							if(comparador.compare(actual, siguiente)!=0)
-							{
-								lista2.insertElement(actual, lista2.size()+1);
-							}
-						}
-						else
-						{
-							Vertex anterior= (Vertex) lista.getElement(i-1);
-
-							if(anterior!=null)
-							{
-								if(comparador.compare(anterior, actual)!=0)
-								{
-									lista2.insertElement(actual, lista2.size()+1);
-								}
-							}
-							else
-							{
-								lista2.insertElement(actual, lista2.size()+1);
-							}
-						}
-
-					}
-				}
-			} 
-			catch (PosException | VacioException| NullException  e) 
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		else
-		{
-			Comparator<Country> comparador=null;
-
-			Ordenamiento<Country> algsOrdenamientoEventos=new Ordenamiento<Country>();;
-
-			comparador= new Country.ComparadorXNombre();
-
-			try 
-			{
-
-				if (lista!=null)
-				{
-					algsOrdenamientoEventos.ordenarMergeSort(lista, comparador, false);
-				}
-
-					for(int i=1; i<=lista.size(); i++)
-					{
-						Country actual= (Country) lista.getElement(i);
-						Country siguiente= (Country) lista.getElement(i+1);
-
-						if(siguiente!=null)
-						{
-							if(comparador.compare(actual, siguiente)!=0)
-							{
-								lista2.insertElement(actual, lista2.size()+1);
-							}
-						}
-						else
-						{
-							Country anterior= (Country) lista.getElement(i-1);
-
-							if(anterior!=null)
-							{
-								if(comparador.compare(anterior, actual)!=0)
-								{
-									lista2.insertElement(actual, lista2.size()+1);
-								}
-							}
-							else
-							{
-								lista2.insertElement(actual, lista2.size()+1);
-							}
-						}
-
-					}
-				}
-			
-			catch (PosException | VacioException| NullException  e) 
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		return lista2;
-	}
-	
-	public ITablaSimbolos unificarHash(ILista lista)
-	{
-
-		Comparator<Vertex<String, Landing>> comparador=null;
-
-		Ordenamiento<Vertex<String, Landing>> algsOrdenamientoEventos=new Ordenamiento<Vertex<String, Landing>>();;
-
-		comparador= new Vertex.ComparadorXKey();
-		
-		ITablaSimbolos tabla= new TablaHashSeparteChaining<>(2);
-
-
-		try 
-		{
-
-			if (lista!=null)
-			{
-				algsOrdenamientoEventos.ordenarMergeSort(lista, comparador, false);
-
-				for(int i=1; i<=lista.size(); i++)
-				{
-					Vertex actual= (Vertex) lista.getElement(i);
-					Vertex siguiente= (Vertex) lista.getElement(i+1);
-
-					if(siguiente!=null)
-					{
-						if(comparador.compare(actual, siguiente)!=0)
-						{
-							tabla.put(actual.getId(), actual);
-						}
-					}
-					else
-					{
-						Vertex anterior= (Vertex) lista.getElement(i-1);
-
-						if(anterior!=null)
-						{
-							if(comparador.compare(anterior, actual)!=0)
-							{
-								tabla.put(actual.getId(), actual);
-							}
-						}
-						else
-						{
-							tabla.put(actual.getId(), actual);
-						}
-					}
-
-				}
-			}
-		} 
-		catch (PosException | VacioException| NullException  e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return tabla;
 	}
 
 	private void buildEdgeForLanding(Landing landing, String cableid) {

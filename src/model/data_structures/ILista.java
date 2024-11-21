@@ -1,5 +1,7 @@
 package model.data_structures;
 
+import java.util.Comparator;
+
 public interface ILista<T extends Comparable <T>> extends Comparable <ILista<T>>{
 	
 	public void addFirst(T element);
@@ -42,4 +44,7 @@ public interface ILista<T extends Comparable <T>> extends Comparable <ILista<T>>
 	 */
 	public ILista<T> sublista(int pos, int numElementos) throws PosException, VacioException, NullException;
 
+	public ILista<T> unificar(Comparator<T> comparador);
+
+	public void ordenar(Comparator<T> comparador, boolean ascendente);
 }
