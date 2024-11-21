@@ -180,33 +180,10 @@ public class Vertex<K extends Comparable<K>,V  extends Comparable <V>> implement
 		
 	}
 
-
-
 	@Override
 	public int compareTo(Vertex<K, V> o) 
 	{
 		return key.compareTo(o.getId());
-	}
-	
-	public void getSCC(ITablaSimbolos<K, Integer> tabla, int idComponente)
-	{
-		mark();
-		tabla.put(key, idComponente);
-		for(int i = 1; i <= arcos.size(); i++)
-		{
-			Vertex<K, V> actual;
-			try 
-			{
-				actual = arcos.getElement(i).getDestination();
-				if(!actual.getMark())
-				{
-					actual.getSCC(tabla, idComponente);
-				}
-			} 
-			catch (PosException | VacioException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 	
 	public static class ComparadorXKey implements Comparator<Vertex<String, Landing>>

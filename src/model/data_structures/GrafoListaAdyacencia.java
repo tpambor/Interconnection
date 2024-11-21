@@ -230,17 +230,42 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 		return copia;
 	}
 	
+	private void getSCCVertex(Vertex<K, V> vertex, ITablaSimbolos<K, Integer> tabla, int idComponente) {
+		vertex.mark();
+		tabla.put(vertex.getId(), idComponente);
+
+		ILista<Edge<K, V>> arcos = vertex.edges();
+
+		for(int i = 1; i <= arcos.size(); i++)
+		{
+			Vertex<K, V> actual;
+			try 
+			{
+				actual = arcos.getElement(i).getDestination();
+
+				if(actual.getMark())
+					continue;
+
+				getSCCVertex(actual, tabla, idComponente);
+			} 
+			catch (PosException | VacioException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	public ITablaSimbolos<K, Integer> getSSC()
 	{
-		PilaEncadenada<Vertex<K, V>> reverseTopological= reverse().topologicalOrder();
-		ITablaSimbolos<K, Integer> tabla= new TablaHashLinearProbing<K, Integer>(numVertices());
-		int idComponente=1;
-		while(reverseTopological.top()!=null)
+		PilaEncadenada<Vertex<K, V>> reverseTopological = reverse().topologicalOrder();
+		ITablaSimbolos<K, Integer> tabla = new TablaHashLinearProbing<K, Integer>(numVertices());
+		int idComponente = 1;
+
+		while(reverseTopological.top() != null)
 		{
-			Vertex<K, V> actual= reverseTopological.pop();
+			Vertex<K, V> actual = reverseTopological.pop();
 			if(!actual.getMark())
 			{
-				actual.getSCC(tabla, idComponente);
+				getSCCVertex(actual, tabla, idComponente);
 				idComponente++;
 			}
 		}
