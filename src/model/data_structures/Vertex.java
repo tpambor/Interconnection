@@ -192,7 +192,7 @@ public class Vertex<K extends Comparable<K>,V  extends Comparable <V>> implement
 	{
 		mark();
 		tabla.put(key, idComponente);
-		for(int i=1; i<= arcos.size(); i++)
+		for(int i = 1; i <= arcos.size(); i++)
 		{
 			Vertex<K, V> actual;
 			try 
@@ -204,57 +204,13 @@ public class Vertex<K extends Comparable<K>,V  extends Comparable <V>> implement
 				}
 			} 
 			catch (PosException | VacioException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 	
-	public ILista<Edge<K, V>> mstPrimLazy()
+	public static class ComparadorXKey implements Comparator<Vertex<String, Landing>>
 	{
-		ILista<Edge<K, V>> mst= new ArregloDinamico<Edge<K, V>>(1);
-		MinPQ<Float, Edge<K, V>> cola= new MinPQ<Float, Edge<K, V>>(1);
-		
-		addEdgesToMinPQ(cola, this);
-		
-		while(!cola.isEmpty())
-		{
-			Edge<K, V> actual= cola.delMin(). getValue();
-			Vertex<K, V> dest= actual.getDestination();
-			if(!dest.marked)
-			{
-				try {
-					mst.insertElement(actual, mst.size()+1);
-				} catch (PosException | NullException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				addEdgesToMinPQ(cola, dest);
-			}
-		}
-		return mst;
-		
-	}
-	
-	private void addEdgesToMinPQ(MinPQ<Float, Edge<K, V>> cola, Vertex<K, V> inicio)
-	{
-		inicio.mark();
-		
-		for(int i=1; i<= inicio.edges().size(); i++)
-		{
-			Edge<K, V> actual=null;
-			try {
-				actual = inicio.edges().getElement(i);
-			} catch (PosException | VacioException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			cola.insert(actual.getWeight(), actual);
-		}
-	}
-	
-	 public static class ComparadorXKey implements Comparator<Vertex<String, Landing>>
-	 {
 		/**
 		 * Comparador alterno de acuerdo al número de likes
 		 * 

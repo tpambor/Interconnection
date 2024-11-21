@@ -275,9 +275,44 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 		return reversePost;
 	}
 	
+	private void addEdgesToMinPQ(MinPQ<Float, Edge<K, V>> cola, Vertex<K, V> inicio)
+	{
+		inicio.mark();
+		
+		for(int i=1; i<= inicio.edges().size(); i++)
+		{
+			Edge<K, V> actual=null;
+			try {
+				actual = inicio.edges().getElement(i);
+			} catch (PosException | VacioException e) {
+				e.printStackTrace();
+			}
+			cola.insert(actual.getWeight(), actual);
+		}
+	}
+
 	public ILista<Edge<K, V>> mstPrimLazy(K idOrigen)
 	{
-		ILista<Edge<K, V>> mst= getVertex(idOrigen).mstPrimLazy();
+		ILista<Edge<K, V>> mst = new ArregloDinamico<Edge<K, V>>(1);
+		MinPQ<Float, Edge<K, V>> cola = new MinPQ<Float, Edge<K, V>>(1);
+		
+		addEdgesToMinPQ(cola, getVertex(idOrigen));
+		
+		while(!cola.isEmpty())
+		{
+			Edge<K, V> actual = cola.delMin(). getValue();
+			Vertex<K, V> dest = actual.getDestination();
+			if(!dest.getMark())
+			{
+				try {
+					mst.insertElement(actual, mst.size() + 1);
+				} catch (PosException | NullException e) {
+					e.printStackTrace();
+				}
+				addEdgesToMinPQ(cola, dest);
+			}
+		}
+
 		unmark();
 		return mst;
 	}
