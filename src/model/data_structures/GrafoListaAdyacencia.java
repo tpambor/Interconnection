@@ -3,19 +3,18 @@ package model.data_structures;
 public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable <V>>
 {
 	private ITablaSimbolos<K, Vertex<K, V>> vertices; 
-	
+	private ITablaSimbolos<K, ILista<Edge<K, V>>> arcosMap;
 	private ILista<Edge<K, V>> arcos;
-	
 	private ILista<Vertex<K, V>> verticesLista;
-	
 	private int numEdges;
 	
 	public GrafoListaAdyacencia(int numVertices)
 	{
-		vertices = new TablaHashLinearProbing<K, Vertex<K, V>>(numVertices);	
+		vertices = new TablaHashLinearProbing<>(numVertices);	
 		numEdges = 0;
 		arcos = new ArregloDinamico<>(1);
 		verticesLista = new ArregloDinamico<>(1);
+		arcosMap = new TablaHashLinearProbing<>(numVertices);
 	}
 	
 	public boolean containsVertex(K id)
@@ -36,9 +35,11 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 	public void insertVertex(K id, V value)
 	{
 		vertices.put(id, new Vertex<K, V>(id, value));
+		arcosMap.put(id, new ArregloDinamico<>(1));
+
 		try {
-			Vertex<K, V> vertice= getVertex(id);
-			verticesLista.insertElement(vertice, verticesLista.size()+1);
+			Vertex<K, V> vertice = getVertex(id);
+			verticesLista.insertElement(vertice, verticesLista.size() + 1);
 		} catch (PosException | NullException e) {
 			e.printStackTrace();
 		}
@@ -47,21 +48,24 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 	public void addEdge(K source, K dest, float weight)
 	{
 		Edge<K, V> existe = getEdge(source, dest);
-		
+
 		if(existe == null)
 		{
 			Vertex<K, V> origin = getVertex(source);
-			
 			Vertex<K, V> destination = getVertex(dest);
-			Edge<K, V> arco1 = new Edge<K, V>(origin, destination, weight);
-			origin.addEdge(arco1);
-			
-			Edge<K, V> arco2 = new Edge<K, V>(destination, origin, weight);
-			destination.addEdge(arco2);
-			numEdges++;
 
 			try 
 			{
+				Edge<K, V> arco1 = new Edge<K, V>(origin, destination, weight);
+				ILista<Edge<K, V>> arcosOrigin = arcosMap.get(source);
+				arcosOrigin.insertElement(arco1, arcosOrigin.size() + 1);
+
+				Edge<K, V> arco2 = new Edge<K, V>(destination, origin, weight);
+				ILista<Edge<K, V>> arcosDestination = arcosMap.get(dest);
+				arcosDestination.insertElement(arco2, arcosDestination.size() + 1);
+
+				numEdges++;
+
 				arcos.insertElement(arco1, arcos.size()+1);
 			} catch (PosException | NullException e) {
 				e.printStackTrace();
@@ -77,26 +81,32 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 	
 	public Edge<K,V> getEdge(K idS, K idD)
 	{
-		Vertex<K,V> origen= vertices.get(idS);
+		Vertex<K,V> origen = vertices.get(idS);
 		
-		if(origen==null)
+		if(origen == null)
 			return null;
 
-		return origen.getEdge(idD);
+		ILista<Edge<K, V>> arcos = arcosMap.get(idS);
+
+		for(int i = 1; i <= arcos.size(); i++)
+		{
+			try 
+			{
+				if(arcos.getElement(i).getDestination().getId().compareTo(idD) == 0)
+					return arcos.getElement(i);
+			} 
+			catch (PosException | VacioException e) 
+			{
+				e.printStackTrace();
+			}
+		}
+
+		return null;
 	}
 	
-	public ILista<Edge<K,V>> adjacentEdges(K id)
+	public ILista<Edge<K, V>> adjacentEdges(K id)
 	{
-		Vertex<K,V> origen= vertices.get(id);
-		return origen.edges();
-	}
-	
-	public ILista<Vertex<K, V>> adjacentVertex(K id)
-	{
-		Vertex<K,V> origen= vertices.get(id);
-		
-		return origen.vertices();
-		
+		return arcosMap.get(id);
 	}
 	
 	public ILista<Edge<K, V>> edges()
@@ -111,7 +121,7 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 	
 	public void unmark()
 	{
-		ILista<Vertex<K, V>> vertices= vertices();
+		ILista<Vertex<K, V>> vertices = vertices();
 		for(int i=1; i <= vertices.size(); i++)
 		{
 			try {
@@ -122,7 +132,7 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 		}
 	}
 	
-	public Edge<K, V>  arcoMin()
+	public Edge<K, V> arcoMin()
 	{
 		Edge<K, V> minimo=null;
 		try 
@@ -147,7 +157,7 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 		
 	}
 	
-	public Edge<K, V>  arcoMax()
+	public Edge<K, V> arcoMax()
 	{
 		Edge<K, V> maximo=null;
 		try 
@@ -206,7 +216,7 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 		vertex.mark();
 		tabla.put(vertex.getId(), idComponente);
 
-		ILista<Edge<K, V>> arcos = vertex.edges();
+		ILista<Edge<K, V>> arcos = arcosMap.get(vertex.getId());
 
 		for(int i = 1; i <= arcos.size(); i++)
 		{
@@ -228,18 +238,19 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 
 	public ITablaSimbolos<K, Integer> getSSC()
 	{
-		PilaEncadenada<Vertex<K, V>> reverseTopological = reverse().topologicalOrder();
+		GrafoListaAdyacencia<K, V> reverse = reverse();
+		PilaEncadenada<Vertex<K, V>> reverseTopological = reverse.topologicalOrder();
 		ITablaSimbolos<K, Integer> tabla = new TablaHashLinearProbing<K, Integer>(numVertices());
 		int idComponente = 1;
 
 		while(reverseTopological.top() != null)
 		{
 			Vertex<K, V> actual = reverseTopological.pop();
-			if(!actual.getMark())
-			{
-				getSCCVertex(actual, tabla, idComponente);
-				idComponente++;
-			}
+			if(actual.getMark())
+				continue;
+
+			reverse.getSCCVertex(actual, tabla, idComponente);
+			idComponente++;
 		}
 		
 		unmark();
@@ -247,6 +258,31 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 		return tabla;
 	}
 	
+	public void topologicalOrderVertex(Vertex<K, V> vertex, ColaEncadenada<Vertex<K, V>> pre, ColaEncadenada<Vertex<K, V>> post, PilaEncadenada<Vertex<K, V>> reversePost)
+	{
+		vertex.mark();
+		pre.enqueue(vertex);
+		
+		ILista<Edge<K, V>> arcos = arcosMap.get(vertex.getId());
+
+		for(int i = 1; i <= arcos.size(); i++)
+		{
+			Vertex<K, V> destino;
+			try {
+				destino = arcos.getElement(i).getDestination();
+				if(destino.getMark())
+					continue;
+
+				topologicalOrderVertex(destino, pre, post, reversePost);
+			} catch (PosException | VacioException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		post.enqueue(vertex);
+		reversePost.push(vertex);
+	}
+
 	public PilaEncadenada<Vertex<K, V>> topologicalOrder()
 	{
 		ColaEncadenada<Vertex<K, V>> pre= new ColaEncadenada<Vertex<K, V>>();
@@ -259,10 +295,12 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 		{
 			try 
 			{
-				if(!vertices.getElement(i).getMark())
-				{
-					vertices.getElement(i).topologicalOrder(pre, post, reversePost);
-				}
+				Vertex<K, V> vertex = vertices.getElement(i);
+
+				if(vertex.getMark())
+					continue;
+
+				topologicalOrderVertex(vertex, pre, post, reversePost);
 			} catch (PosException | VacioException e) {
 				e.printStackTrace();
 			}
@@ -276,11 +314,13 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 	{
 		inicio.mark();
 		
-		for(int i=1; i<= inicio.edges().size(); i++)
+		ILista<Edge<K, V>> arcosInicio = arcosMap.get(inicio.getId());
+
+		for(int i=1; i<= arcosInicio.size(); i++)
 		{
 			Edge<K, V> actual=null;
 			try {
-				actual = inicio.edges().getElement(i);
+				actual = arcosInicio.getElement(i);
 			} catch (PosException | VacioException e) {
 				e.printStackTrace();
 			}
@@ -317,12 +357,15 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 	private void relaxDijkstra(ITablaSimbolos<K, NodoTS<Float, Edge<K, V>>> tablaResultado, MinPQIndexada<Float, K, Edge<K, V>> colaIndexada, Vertex<K, V> actual, float pesoAcumulado)
 	{
 		actual.mark();
-		for(int i = 1; i <= actual.edges().size(); i++)
+
+		ILista<Edge<K, V>> arcosActual = arcosMap.get(actual.getId());
+
+		for(int i = 1; i <= arcosActual.size(); i++)
 		{
 			Edge<K, V> arcoActual;
 			try 
 			{
-				arcoActual = actual.edges().getElement(i);
+				arcoActual = arcosActual.getElement(i);
 				Vertex<K, V> destino = arcoActual.getDestination();
 				float peso = arcoActual.getWeight();
 				if(!destino.getMark())

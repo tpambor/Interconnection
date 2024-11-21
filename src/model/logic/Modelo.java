@@ -181,7 +181,9 @@ public class Modelo {
 					
 					for(int j=1; j<=((ILista) lista.getElement(i)).size(); j++)
 					{
-						cantidad+= ((Vertex) ((ILista) lista.getElement(i)).getElement(j)).edges().size();
+						Vertex vertex = ((Vertex) ((ILista) lista.getElement(i)).getElement(j));	
+
+						cantidad += grafo.adjacentEdges(vertex.getId()).size();
 					}
 					
 					fragmento+= "\n Landing " + "\n Nombre: " + landing.getName() + "\n País: " + landing.getPais() + "\n Id: " + landing.getId() + "\n Cantidad: " + cantidad;
@@ -317,7 +319,11 @@ public class Modelo {
 				while( (actual= (Vertex) tabla.get(idBusqueda))!=null && actual.getInfo()!=null)
 				{
 					path.push(actual);
-					idBusqueda= (String) ((Vertex)actual).getId();
+					String nextId = (String) ((Vertex)actual).getId();
+					if (nextId == idBusqueda)
+						break;
+					
+					idBusqueda = nextId;
 					contador++;
 				}
 				
@@ -372,7 +378,7 @@ public class Modelo {
 			try 
 			{
 				Vertex vertice= (Vertex) lista.getElement(i);
-				ILista arcos= vertice.edges();
+				ILista arcos= grafo.adjacentEdges(vertice.getId());
 				
 				for(int j=1; j<= arcos.size(); j++)
 				{
