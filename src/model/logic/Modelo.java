@@ -191,22 +191,22 @@ public class Modelo {
 		while (!pila.isEmpty()) {
 			Edge arco = ((Edge) pila.pop());
 
-			if (arco.getSource().getInfo().getClass().getName().equals("model.data_structures.Landing")) {
+			if (arco.getSource().getInfo() instanceof Landing) {
 				longorigen = ((Landing) arco.getSource().getInfo()).getLongitude();
 				latorigen = ((Landing) arco.getSource().getInfo()).getLongitude();
 				origennombre = ((Landing) arco.getSource().getInfo()).getLandingId();
 			}
-			if (arco.getSource().getInfo().getClass().getName().equals("model.data_structures.Country")) {
+			if (arco.getSource().getInfo() instanceof Country) {
 				longorigen = ((Country) arco.getSource().getInfo()).getLongitude();
 				latorigen = ((Country) arco.getSource().getInfo()).getLongitude();
 				origennombre = ((Country) arco.getSource().getInfo()).getCapitalName();
 			}
-			if (arco.getDestination().getInfo().getClass().getName().equals("model.data_structures.Landing")) {
+			if (arco.getDestination().getInfo() instanceof Landing) {
 				latdestino = ((Landing) arco.getDestination().getInfo()).getLatitude();
 				longdestino = ((Landing) arco.getDestination().getInfo()).getLatitude();
 				destinonombre = ((Landing) arco.getDestination().getInfo()).getLandingId();
 			}
-			if (arco.getDestination().getInfo().getClass().getName().equals("model.data_structures.Country")) {
+			if (arco.getDestination().getInfo() instanceof Country) {
 				longdestino = ((Country) arco.getDestination().getInfo()).getLatitude();
 				latdestino = ((Country) arco.getDestination().getInfo()).getLatitude();
 				destinonombre = ((Country) arco.getDestination().getInfo()).getCapitalName();
@@ -324,7 +324,7 @@ public class Modelo {
 					Vertex vertice2 = ((Edge) arcos.getElement(j)).getDestination();
 
 					Country pais = null;
-					if (vertice2.getInfo().getClass().getName().equals("model.data_structures.Landing")) {
+					if (vertice2.getInfo() instanceof Landing) {
 						Landing landing = (Landing) vertice2.getInfo();
 						pais = (Country) paises.get(landing.getPais());
 						countries.insertElement(pais, countries.size() + 1);
