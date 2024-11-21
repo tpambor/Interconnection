@@ -4,7 +4,7 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 {
 	private ITablaSimbolos<K, Vertex<K, V>> vertices; 
 	private ITablaSimbolos<K, ILista<Edge<K, V>>> arcosMap;
-	private ILista<Edge<K, V>> arcos;
+	private ILista<Edge<K, V>> arcs;
 	private ILista<Vertex<K, V>> verticesLista;
 	private int numEdges;
 	
@@ -12,7 +12,7 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 	{
 		vertices = new TablaHashLinearProbing<>(numVertices);	
 		numEdges = 0;
-		arcos = new ArregloDinamico<>(1);
+		arcs = new ArregloDinamico<>(1);
 		verticesLista = new ArregloDinamico<>(1);
 		arcosMap = new TablaHashLinearProbing<>(numVertices);
 	}
@@ -66,7 +66,7 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 
 				numEdges++;
 
-				arcos.insertElement(arco1, arcos.size()+1);
+				arcs.insertElement(arco1, arcs.size()+1);
 			} catch (PosException | NullException e) {
 				e.printStackTrace();
 			}
@@ -111,7 +111,7 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 	
 	public ILista<Edge<K, V>> edges()
 	{
-		return arcos;
+		return arcs;
 	}
 	
 	public ILista<Vertex<K,V>> vertices()
@@ -137,14 +137,14 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 		Edge<K, V> minimo=null;
 		try 
 		{
-			minimo=arcos.getElement(1);
-			float min=arcos.getElement(1).getWeight();
-			for(int i=2; i<=arcos.size(); i++)
+			minimo=arcs.getElement(1);
+			float min=arcs.getElement(1).getWeight();
+			for(int i=2; i<=arcs.size(); i++)
 			{
-				if(arcos.getElement(i).getWeight()< min)
+				if(arcs.getElement(i).getWeight()< min)
 				{
-					minimo=arcos.getElement(i);
-					min=arcos.getElement(i).getWeight();
+					minimo=arcs.getElement(i);
+					min=arcs.getElement(i).getWeight();
 				}
 			}
 		} 
@@ -163,12 +163,12 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 		try 
 		{
 			float max=0;
-			for(int i=2; i<=arcos.size(); i++)
+			for(int i=2; i<=arcs.size(); i++)
 			{
-				if(arcos.getElement(i).getWeight()> max)
+				if(arcs.getElement(i).getWeight()> max)
 				{
-					maximo=arcos.getElement(i);
-					max=arcos.getElement(i).getWeight();
+					maximo=arcs.getElement(i);
+					max=arcs.getElement(i).getWeight();
 				}
 			}
 		} 
@@ -318,20 +318,20 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 
 		for(int i=1; i<= arcosInicio.size(); i++)
 		{
-			Edge<K, V> actual=null;
+			Edge<K, V> actual;
 			try {
 				actual = arcosInicio.getElement(i);
+				cola.insert(actual.getWeight(), actual);
 			} catch (PosException | VacioException e) {
 				e.printStackTrace();
 			}
-			cola.insert(actual.getWeight(), actual);
 		}
 	}
 
 	public ILista<Edge<K, V>> mstPrimLazy(K idOrigen)
 	{
-		ILista<Edge<K, V>> mst = new ArregloDinamico<Edge<K, V>>(1);
-		MinPQ<Float, Edge<K, V>> cola = new MinPQ<Float, Edge<K, V>>(1);
+		ILista<Edge<K, V>> mst = new ArregloDinamico<>(1);
+		MinPQ<Float, Edge<K, V>> cola = new MinPQ<>(1);
 		
 		addEdgesToMinPQ(cola, getVertex(idOrigen));
 		
@@ -374,7 +374,7 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 					
 					if(llegadaDestino == null)
 					{
-						tablaResultado.put(destino.getId(), new NodoTS<Float, Edge<K, V>>(pesoAcumulado + peso, arcoActual));
+						tablaResultado.put(destino.getId(), new NodoTS<>(pesoAcumulado + peso, arcoActual));
 						colaIndexada.insert(peso + pesoAcumulado, destino.getId(), arcoActual);
 					}
 					else if(llegadaDestino.getKey()>(pesoAcumulado + peso))
@@ -396,10 +396,10 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 	{
 		Vertex<K, V> inicio = getVertex(idOrigen);
 
-		ITablaSimbolos<K, NodoTS<Float, Edge<K, V>>> tablaResultado = new TablaHashLinearProbing<K, NodoTS<Float, Edge<K, V>>>(2);
-		MinPQIndexada<Float, K, Edge<K, V>> colaIndexada = new MinPQIndexada<Float, K, Edge<K, V>>(20);
+		ITablaSimbolos<K, NodoTS<Float, Edge<K, V>>> tablaResultado = new TablaHashLinearProbing<>(2);
+		MinPQIndexada<Float, K, Edge<K, V>> colaIndexada = new MinPQIndexada<>(20);
 		
-		tablaResultado.put(inicio.getId(), new NodoTS<Float, Edge<K, V>>(0f, null));
+		tablaResultado.put(inicio.getId(), new NodoTS<>(0f, null));
 		
 		relaxDijkstra(tablaResultado, colaIndexada, inicio, 0);
 		

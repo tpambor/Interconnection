@@ -319,8 +319,8 @@ public class Modelo {
 				while( (actual= (Vertex) tabla.get(idBusqueda))!=null && actual.getInfo()!=null)
 				{
 					path.push(actual);
-					String nextId = (String) ((Vertex)actual).getId();
-					if (nextId == idBusqueda)
+					String nextId = (String)actual.getId();
+					if (nextId.equals(idBusqueda))
 						break;
 					
 					idBusqueda = nextId;
