@@ -5,6 +5,7 @@ public class Edge <K extends Comparable<K>, V extends Comparable <V>> implements
 	private Vertex<K, V> source;
 	private Vertex<K, V> destination;
 	private float weight;
+
 	public Edge(Vertex<K,V> source, Vertex<K,V>destination, float weight)
 	{
 		this.source= source;
@@ -12,12 +13,12 @@ public class Edge <K extends Comparable<K>, V extends Comparable <V>> implements
 		this.weight= weight;
 	}
 	
-	public Vertex<K,V> getSource()
+	public Vertex<K, V> getSource()
 	{
 		return source;
 	}
 	
-	public Vertex<K,V> getDestination()
+	public Vertex<K, V> getDestination()
 	{
 		return destination;
 	}
@@ -29,7 +30,7 @@ public class Edge <K extends Comparable<K>, V extends Comparable <V>> implements
 	
 	public void setWeight(float weight)
 	{
-		this.weight= weight;
+		this.weight = weight;
 	}
 	
 	public float getWeight()
@@ -38,9 +39,8 @@ public class Edge <K extends Comparable<K>, V extends Comparable <V>> implements
 	}
 
 	@Override
-	public int compareTo(Edge o) 
+	public int compareTo(Edge<K, V> o) 
 	{
-		// TODO Auto-generated method stub
 		return 0;
 	}
 }
