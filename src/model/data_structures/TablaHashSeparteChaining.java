@@ -105,10 +105,7 @@ public class TablaHashSeparteChaining<K extends Comparable<K>, V extends Compara
 
 	@Override
 	public boolean isEmpty() {
-		if (size() == 0) {
-			return true;
-		}
-		return false;
+	    return size() == 0;
 	}
 
 	@Override

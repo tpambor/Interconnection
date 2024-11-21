@@ -66,30 +66,17 @@ public abstract class TablaHash<K extends Comparable<K>, V extends Comparable <V
 		return true;
 	}
 
-	static int nextPrime(int N)
-
-	{
-		if (N <= 1)
-
-			return 2;
-
-		int prime = N;
-
-		boolean found = false;
-
-
-		while (!found)
-
-		{
-			prime++;
-
-			if (isPrime(prime))
-
-				found = true;
-
-		}
-		return prime;
-
+	static int nextPrime(int number) {
+	    if (number <= 1)
+	        return 2;
+	    int prime = number;
+	    boolean found = false;
+	    while (!found) {
+	        prime++;
+	        if (isPrime(prime))
+	            found = true;
+	    }
+	    return prime;
 	}
 
 }
