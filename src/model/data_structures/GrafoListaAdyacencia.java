@@ -99,20 +99,6 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 		
 	}
 	
-	public int indegree(K vertex)
-	{
-		Vertex<K,V> origen= vertices.get(vertex);
-
-		return origen.indegree();
-	}
-	
-	public int outdegree(K vertex)
-	{
-		Vertex<K,V> origen= vertices.get(vertex);
-
-		return origen.outdegree();
-	}
-	
 	public ILista<Edge<K, V>> edges()
 	{
 		return arcos;
@@ -134,20 +120,6 @@ public class GrafoListaAdyacencia <K extends Comparable<K> ,V extends Comparable
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	public void dfs(K id)
-	{
-		Vertex<K, V> inicio = getVertex(id);
-		inicio.dfs(null);
-		unmark();
-	}
-	
-	public void bfs(K id)
-	{
-		Vertex<K, V> inicio = getVertex(id);
-		inicio.bfs();
-		unmark();
 	}
 	
 	public Edge<K, V>  arcoMin()
