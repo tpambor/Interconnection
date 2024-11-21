@@ -1,24 +1,11 @@
 package model.data_structures;
 
-import java.text.DecimalFormat;
 
 public class TablaHashLinearProbing<K extends Comparable<K>, V extends Comparable<V>>
 		extends TablaHash<K, V, NodoTS<K, V>> {
 
 	public TablaHashLinearProbing(int tamInicial) {
-		int m = nextPrime(tamInicial);
-		minicial = m;
-		listaNodos = new ArregloDinamico<>(m);
-		tamanoAct = 0;
-		tamanoTabla = m;
-
-		for (int i = 1; i <= tamanoTabla; i++) {
-			try {
-				listaNodos.insertElement(null, i);
-			} catch (PosException | NullException e) {
-				e.printStackTrace();
-			}
-		}
+		initializeTable(tamInicial);
 	}
 
 	@Override
@@ -207,19 +194,6 @@ public class TablaHashLinearProbing<K extends Comparable<K>, V extends Comparabl
 		return tamanoTabla;
 	}
 
-	public String toString() {
-		String retorno = "";
-		retorno += "La cantidad de duplas: " + keySet().size();
-		retorno += "\nEl m inicial es: " + minicial;
-		retorno += "\nEl m final es: " + tamanoTabla;
-		double tam = tamanoAct;
-		double tam2 = tamanoTabla;
-		DecimalFormat df = new DecimalFormat("###.##");
-		double tamanoCarga = tam / tam2;
-		retorno += "\nEl factor de carga es: " + df.format(tamanoCarga);
-		retorno += "\nLa cantidad de rehash es: " + cantidadRehash;
-
-		return retorno;
-	}
+	
 
 }

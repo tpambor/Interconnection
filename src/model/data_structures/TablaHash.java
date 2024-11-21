@@ -1,5 +1,7 @@
 package model.data_structures;
 
+import java.text.DecimalFormat;
+
 public abstract class TablaHash<K extends Comparable<K>, V extends Comparable <V>, T extends Comparable <T>> implements ITablaSimbolos<K, V> {
     
     ILista<T> listaNodos;
@@ -79,4 +81,34 @@ public abstract class TablaHash<K extends Comparable<K>, V extends Comparable <V
 	    return prime;
 	}
 
+	public String toString() {
+		String retorno = "";
+		retorno += "La cantidad de duplas: " + keySet().size();
+		retorno += "\nEl m inicial es: " + minicial;
+		retorno += "\nEl m final es: " + tamanoTabla;
+		double tam = tamanoAct;
+		double tam2 = tamanoTabla;
+		DecimalFormat df = new DecimalFormat("###.##");
+		double tamanoCarga = tam / tam2;
+		retorno += "\nEl factor de carga es: " + df.format(tamanoCarga);
+		retorno += "\nLa cantidad de rehash es: " + cantidadRehash;
+
+		return retorno;
+	}
+	
+	public void initializeTable(int tamInicial) {
+		int m = nextPrime(tamInicial);
+		minicial = m;
+		listaNodos = new ArregloDinamico<>(m);
+		tamanoAct = 0;
+		tamanoTabla = m;
+
+		for (int i = 1; i <= tamanoTabla; i++) {
+			try {
+				listaNodos.insertElement(null, i);
+			} catch (PosException | NullException e) {
+				e.printStackTrace();
+			}
+		}
+    }
 }
