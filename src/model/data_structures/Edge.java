@@ -12,12 +12,12 @@ public class Edge <K extends Comparable<K>, V extends Comparable <V>> implements
 		this.weight= weight;
 	}
 	
-	public Vertex<K,V> getSource()
+	public Vertex<K, V> getSource()
 	{
 		return source;
 	}
 	
-	public Vertex<K,V> getDestination()
+	public Vertex<K, V> getDestination()
 	{
 		return destination;
 	}
@@ -38,9 +38,8 @@ public class Edge <K extends Comparable<K>, V extends Comparable <V>> implements
 	}
 
 	@Override
-	public int compareTo(Edge o) 
+	public int compareTo(Edge<K, V> o) 
 	{
-		// TODO Auto-generated method stub
 		return 0;
 	}
 }

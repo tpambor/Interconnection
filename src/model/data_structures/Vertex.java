@@ -11,11 +11,10 @@ public class Vertex<K extends Comparable<K>,V  extends Comparable <V>> implement
 	
 	public Vertex(K id, V value)
 	{
-		this.key=id;
-		this.value=value;
-		this.arcos= new ArregloDinamico<Edge<K, V>>(1);
+		this.key = id;
+		this.value = value;
+		this.arcos = new ArregloDinamico<Edge<K, V>>(1);
 	}
-
 	
 	public K getId()
 	{
@@ -44,12 +43,12 @@ public class Vertex<K extends Comparable<K>,V  extends Comparable <V>> implement
 	
 	public void mark()
 	{
-		marked=true;
+		marked = true;
 	}
 	
 	public void unmark()
 	{
-		marked=false;
+		marked = false;
 	}
 	
 	public int outdegree()
@@ -256,76 +255,16 @@ public class Vertex<K extends Comparable<K>,V  extends Comparable <V>> implement
 	
 	 public static class ComparadorXKey implements Comparator<Vertex<String, Landing>>
 	 {
-
-		/** Comparador alterno de acuerdo al número de likes
-		* @return valor 0 si video1 y video2 tiene los mismos likes.
-		 valor negativo si video1 tiene menos likes que video2.
-		 valor positivo si video1 tiene más likes que video2. */
-		 public int compare(Vertex vertice1, Vertex vertice2) 
-		 {
-			 return ((String)vertice1.getId()).compareToIgnoreCase((String) vertice2.getId());
-		 }
-
-	}
-	 
-	public ITablaSimbolos<K, NodoTS<Float, Edge<K, V>>> minPathTree()
-	{
-		 ITablaSimbolos<K, NodoTS<Float, Edge<K, V>>> tablaResultado= new TablaHashLinearProbing<K, NodoTS<Float, Edge<K, V>>>(2);
-		 MinPQIndexada<Float, K, Edge<K, V>> colaIndexada= new MinPQIndexada<Float, K, Edge<K, V>>(20);
-		 
-		 tablaResultado.put(this.key, new NodoTS<Float, Edge<K, V>>(0f, null));
-		 
-		 relaxDijkstra(tablaResultado, colaIndexada, this, 0);
-		 
-		 while(!colaIndexada.isEmpty())
-		 {
-			 NodoTS<Float, Edge<K, V>> actual= colaIndexada.delMin();
-			 Edge<K, V> arcoActual= actual.getValue();
-			 float pesoActual= actual.getKey();
-			 relaxDijkstra(tablaResultado, colaIndexada, arcoActual.getDestination(), pesoActual);
-		 }
-		 
-		 return tablaResultado;
-	}
-	
-	public void relaxDijkstra(ITablaSimbolos<K, NodoTS<Float, Edge<K, V>>> tablaResultado, MinPQIndexada<Float, K, Edge<K, V>> colaIndexada, Vertex<K, V> actual, float pesoAcumulado)
-	{
-		actual.mark();
-		for(int i=1; i<=actual.edges().size(); i++)
+		/**
+		 * Comparador alterno de acuerdo al número de likes
+		 * 
+		 * @return valor 0 si video1 y video2 tiene los mismos likes.
+		 *         valor negativo si video1 tiene menos likes que video2.
+		 *         valor positivo si video1 tiene más likes que video2.
+		 */
+		public int compare(Vertex<String, Landing> vertice1, Vertex<String, Landing> vertice2) 
 		{
-			Edge<K, V> arcoActual;
-			try 
-			{
-				arcoActual = actual.edges().getElement(i);
-				Vertex<K, V> destino= arcoActual.getDestination();
-				float peso= arcoActual.getWeight();
-				if(!destino.getMark())
-				{
-					NodoTS<Float, Edge<K, V>>llegadaDestino= tablaResultado.get(destino.getId());
-					
-					if(llegadaDestino== null)
-					{
-						tablaResultado.put(destino.getId(), new NodoTS<Float, Edge<K, V>>(pesoAcumulado + peso, arcoActual));
-						colaIndexada.insert(peso+ pesoAcumulado, destino.getId(), arcoActual);
-						
-					}
-					else if(llegadaDestino.getKey()>(pesoAcumulado + peso))
-					{
-						llegadaDestino.setKey(pesoAcumulado + peso);
-						llegadaDestino.setValue(arcoActual);
-						colaIndexada.changePriority(destino.getId(), pesoAcumulado + peso, arcoActual);
-						
-					}
-				}
-			} 
-			catch (PosException | VacioException e) 
-			{
-				e.printStackTrace();
-			}
-			
+			return vertice1.getId().compareToIgnoreCase(vertice2.getId());
 		}
 	}
-	
-	
-	
 }
